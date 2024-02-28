@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RaceTo21_GUI
 {
@@ -20,42 +21,85 @@ namespace RaceTo21_GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        int TaskNumber = 0;
-        bool TaskSuccess = false;
-        int NumberOfPlayers;
+        public Task nextTask = Task.GetNumberOfPlayers;
+        public bool TaskSuccess = false;
+        public int NumberOfPlayers;
 
         public MainWindow()
         {
             InitializeComponent();
+            DoNextTask();
+        }
+
+        public void DoNextTask()
+        {
+            if (nextTask == Task.GetNumberOfPlayers)
+            {
+                Title_Phrase.Text = "Let's Race To 21!";
+                Support_Text.Text = "How many players? (Between 2-8)";
+                User_Input.Text = "*Input Value*";
+
+                if (TaskSuccess == true)
+                {
+                    TaskSuccess = false;
+                    nextTask = Task.GetNames;
+                }
+            }
+
+            if (nextTask == Task.GetNames)
+            {
+                Title_Phrase.Text = "Welcome players!";
+                Support_Text.Text = "Player #1: What is your name? (Limit to 10 characters)";
+                User_Input.Text = "*Input Name*";
+
+                if (TaskSuccess == true)
+                {
+                    TaskSuccess = false;
+                    nextTask = Task.GetNames;
+                }
+            }
         }
 
         private void Continue_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (TaskNumber == 0)
-            {
-                if (int.TryParse(User_Input.Text, out NumberOfPlayers) == false || NumberOfPlayers < 2 || NumberOfPlayers > 8)
-                {
-                    User_Input.Text = "Invalid, try again.";
-                }
-                else
-                {
-                    Title_Phrase.Text = "Welcome Players!";
-                    Support_Text.Text = "Please input your names";
-                    TaskSuccess = true; 
-                }
-                Title_Phrase.Text = "Welcome Players!";
-                Support_Text.Text = "Please input your names";
-            }
-            if (TaskNumber == 1)
-            {
-                Title_Phrase.Text = "Betting Phase";
-                Support_Text.Text = "How much would you like to bet? Your current bank total is $100.";
-            }
+            CheckTaskSuccess();
+        }
 
-            if (TaskSuccess == true)
+        private void CheckTaskSuccess()
+        {
+            if (nextTask == Task.GetNumberOfPlayers)
             {
-                TaskNumber++;
-                TaskSuccess = false;
+                GetNumberOfPlayersProcess();
+            }
+            if (nextTask == Task.GetNames)
+            {
+
+            }
+        }
+
+        private void GetNumberOfPlayersProcess()
+        {
+            if (int.TryParse(User_Input.Text, out NumberOfPlayers) == true && NumberOfPlayers >= 2 && NumberOfPlayers <= 8)
+            {
+                NumberOfPlayers = int.Parse(User_Input.Text);
+                TaskSuccess = true;
+                DoNextTask();
+            }
+            else
+            {
+                User_Input.Text = "*Invalid, try again*";
+            }
+        }
+
+        private void GetPlayerNamesProcess()
+        {
+            if (User_Input.Text != "*Insert Text*" && User_Input.Text.Length >= 1 || User_Input.Text.Length <= 10)
+            {
+
+            }
+            else
+            {
+                User_Input.Text = "*Invalid, try again*";
             }
         }
     }
