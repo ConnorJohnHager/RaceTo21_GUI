@@ -23,7 +23,12 @@ namespace RaceTo21_GUI
     {
         public Task nextTask = Task.GetNumberOfPlayers;
         public bool TaskSuccess = false;
-        public int NumberOfPlayers;
+        public int TaskOrder = 1;
+
+        int NumberOfPlayers;
+        List<Player> players = new List<Player>();
+        int bet;
+        int pot;
 
         public MainWindow()
         {
@@ -36,7 +41,7 @@ namespace RaceTo21_GUI
             if (nextTask == Task.GetNumberOfPlayers)
             {
                 Title_Phrase.Text = "Let's Race To 21!";
-                Support_Text.Text = "How many players? (Between 2-8)";
+                Support_Text.Text = "How many players? (between 2-8)";
                 User_Input.Text = "*Input Value*";
 
                 if (TaskSuccess == true)
@@ -48,15 +53,23 @@ namespace RaceTo21_GUI
 
             if (nextTask == Task.GetNames)
             {
-                Title_Phrase.Text = "Welcome players!";
-                Support_Text.Text = "Player #1: What is your name? (Limit to 10 characters)";
+                Title_Phrase.Text = "Player #" + TaskOrder;
+                Support_Text.Text = "What is your name? (Limit to 10 characters)";
                 User_Input.Text = "*Input Name*";
 
                 if (TaskSuccess == true)
                 {
                     TaskSuccess = false;
-                    nextTask = Task.GetNames;
+                    TaskOrder = 1;
+                    nextTask = Task.IntroducePlayers;
                 }
+            }
+
+            if (nextTask == Task.GetBets)
+            {
+                Title_Phrase.Text = "Welcome " + players[TaskOrder - 1].name + "!";
+                Support_Text.Text = "How much would you like to bet? Your current bank stands at $" + players[TaskOrder - 1].bank + ".";
+                User_Input.Text = "*Input Value*";
             }
         }
 
@@ -73,7 +86,11 @@ namespace RaceTo21_GUI
             }
             if (nextTask == Task.GetNames)
             {
-
+                GetPlayerNamesProcess();
+            }
+            if (nextTask == Task.GetBets)
+            {
+                GetPlayerBetsProcess();
             }
         }
 
@@ -90,13 +107,45 @@ namespace RaceTo21_GUI
                 User_Input.Text = "*Invalid, try again*";
             }
         }
+        private void AddPlayer(string n)
+        {
+            players.Add(new Player(n));
+        }
 
         private void GetPlayerNamesProcess()
         {
-            if (User_Input.Text != "*Insert Text*" && User_Input.Text.Length >= 1 || User_Input.Text.Length <= 10)
+            if (User_Input.Text != "*Insert Text*" && User_Input.Text.Length >= 1 && User_Input.Text.Length <= 10)
             {
-
+                AddPlayer(User_Input.Text);
+                nextTask = Task.GetBets;
+                DoNextTask();
             }
+            else
+            {
+                User_Input.Text = "*Invalid, try again*";
+            }
+        }
+
+        private void GetPlayerBetsProcess()
+        {
+            if (int.TryParse(User_Input.Text, out bet) == true && bet > 0 && bet <= players[TaskOrder - 1].bank)
+            {
+                bet = int.Parse(User_Input.Text);
+                players[TaskOrder - 1].bank -= bet;
+                pot += bet;
+                TaskOrder++;
+
+                if (TaskOrder == NumberOfPlayers)
+                {
+                    TaskSuccess = true;
+                    DoNextTask();
+                }
+                else
+                {
+                    nextTask = Task.GetNames;
+                    DoNextTask();
+                }
+            } 
             else
             {
                 User_Input.Text = "*Invalid, try again*";
