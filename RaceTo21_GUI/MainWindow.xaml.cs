@@ -23,7 +23,7 @@ namespace RaceTo21_GUI
     {
         public Task nextTask = Task.GetNumberOfPlayers;
         public bool TaskSuccess = false;
-        public int TaskOrder = 1;
+        public int TaskOrder = 0;
 
         int NumberOfPlayers;
         List<Player> players = new List<Player>();
@@ -53,23 +53,30 @@ namespace RaceTo21_GUI
 
             if (nextTask == Task.GetNames)
             {
-                Title_Phrase.Text = "Player #" + TaskOrder;
+                Title_Phrase.Text = "Player #" + (TaskOrder + 1).ToString();
                 Support_Text.Text = "What is your name? (Limit to 10 characters)";
                 User_Input.Text = "*Input Name*";
 
                 if (TaskSuccess == true)
                 {
                     TaskSuccess = false;
-                    TaskOrder = 1;
+                    TaskOrder = 0;
                     nextTask = Task.IntroducePlayers;
                 }
             }
 
             if (nextTask == Task.GetBets)
             {
-                Title_Phrase.Text = "Welcome " + players[TaskOrder - 1].name + "!";
-                Support_Text.Text = "How much would you like to bet? Your current bank stands at $" + players[TaskOrder - 1].bank + ".";
+                Title_Phrase.Text = "Welcome " + players[TaskOrder].name + "!";
+                Support_Text.Text = "How much would you like to bet? Your current bank stands at $" + players[TaskOrder].bank + ".";
                 User_Input.Text = "*Input Value*";
+            }
+
+            if (nextTask == Task.IntroducePlayers)
+            {
+                Title_Phrase.Text = "Thank you for playing today!";
+                Support_Text.Visibility = Visibility.Hidden;
+                User_Input.Visibility = Visibility.Hidden;
             }
         }
 
@@ -128,16 +135,17 @@ namespace RaceTo21_GUI
 
         private void GetPlayerBetsProcess()
         {
-            if (int.TryParse(User_Input.Text, out bet) == true && bet > 0 && bet <= players[TaskOrder - 1].bank)
+            if (int.TryParse(User_Input.Text, out bet) == true && bet > 0 && bet <= players[TaskOrder].bank)
             {
                 bet = int.Parse(User_Input.Text);
-                players[TaskOrder - 1].bank -= bet;
+                players[TaskOrder].bank -= bet;
                 pot += bet;
                 TaskOrder++;
 
                 if (TaskOrder == NumberOfPlayers)
                 {
                     TaskSuccess = true;
+                    nextTask = Task.GetNames;
                     DoNextTask();
                 }
                 else
