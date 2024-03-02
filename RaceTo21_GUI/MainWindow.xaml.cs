@@ -126,6 +126,21 @@ namespace RaceTo21_GUI
             CheckTaskSuccess();
         }
 
+        private void Draw_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Card card = deck.DealTopCard();
+            players[currentPlayer].cards.Add(card);
+            players[currentPlayer].score = ScoreHand(players[currentPlayer]);
+            TaskSuccess = true;
+            DoNextTask();
+        }
+
+        private void Stay_Button_Click(object sender, RoutedEventArgs e)
+        {
+            players[currentPlayer].status = PlayerStatus.stay;
+            DoNextTask();
+        }
+
         private void CheckTaskSuccess()
         {
             if (nextTask == Task.GetNumberOfPlayers)
