@@ -40,7 +40,7 @@
             </StackPanel>
         </Border>
 
-        <!-- This sets up the scoreboard -->
+        <!--Everything that is initially hidden -->
         <Border x:Name="Scoreboard"  BorderBrush="#F8E8A7" BorderThickness="5" Grid.Row="0" Grid.RowSpan="10" Grid.ColumnSpan="1" Background="#0E5432" Visibility="Hidden"/>
 
         <TextBlock x:Name="PlayerTitle" Text="Player" Foreground="#FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.RowSpan="1" FontSize="20" FontWeight="Bold" TextDecorations="Underline"  Margin="15,0,0,0" Visibility="Hidden"/>
@@ -48,5 +48,10 @@
 
         <TextBlock x:Name="ScoreTitle" Text="Score" Foreground="#FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="0" Grid.RowSpan="1" FontSize="20" FontWeight="Bold" TextDecorations="Underline" Margin="0,0,15,0" Visibility="Hidden"/>
         <TextBlock x:Name="PotScore" Text="#" Foreground="#FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="9" Grid.RowSpan="1" FontSize="20" Margin="0,0,15,0" Visibility="Hidden"/>
+
+        <Button x:Name="Draw_Button" Content="Draw" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6" Grid.Column="2" FontSize="16" Width="100" Visibility="Hidden"/>
+        <Button x:Name="Stay_Button" Content="Stay" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="7" Grid.Column="2" FontSize="16" Width="100" Visibility="Hidden"/>
+
+        <TextBlock x:Name="WhoseTurn" Text="..." HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontSize="16" Visibility="Hidden"/>
     </Grid>
 </Window>

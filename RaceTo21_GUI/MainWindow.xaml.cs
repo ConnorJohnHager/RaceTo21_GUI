@@ -27,8 +27,11 @@ namespace RaceTo21_GUI
 
         public int NumberOfPlayers;
         List<Player> players = new List<Player>();
+        public int currentPlayer = 0;
         public int bet;
         public int pot;
+        List<TextBlock> scores = new List<TextBlock>();
+        Deck deck = new Deck();
 
         public MainWindow()
         {
@@ -74,7 +77,47 @@ namespace RaceTo21_GUI
 
             if (nextTask == Task.SetUpBoard)
             {
+                deck.Shuffle();
+                UpdateScores();
+                nextTask = Task.PlayerTurn;
                 SetUpBoardProcess();
+            }
+
+            if (nextTask == Task.PlayerTurn)
+            {
+                if (players[currentPlayer].cards.Count == 0)
+                {
+                    Card card = deck.DealTopCard();
+                    players[currentPlayer].cards.Add(card);
+                    players[currentPlayer].score = ScoreHand(players[currentPlayer]);
+                    UpdateScores();
+                    nextTask = Task.CheckForEnd;
+                }
+                else if (players[currentPlayer].status != PlayerStatus.active)
+                {
+                    UpdateScores();
+                    nextTask = Task.CheckForEnd;
+                }
+                else if (TaskSuccess == true)
+                {
+                    UpdateScores();
+                    TaskSuccess = false;
+                    nextTask = Task.CheckForEnd;
+                }
+                else
+                {
+                    WhoseTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                }
+            }
+            if (nextTask == Task.CheckForEnd)
+            {
+                currentPlayer++;
+                if (currentPlayer > players.Count - 1)
+                {
+                    currentPlayer = 0; // back to the first player...
+                }
+                nextTask = Task.PlayerTurn;
+                DoNextTask();
             }
         }
 
@@ -151,7 +194,7 @@ namespace RaceTo21_GUI
                     nextTask = Task.GetNames;
                     DoNextTask();
                 }
-            } 
+            }
             else
             {
                 User_Input.Text = "*Invalid, try again*";
@@ -181,6 +224,9 @@ namespace RaceTo21_GUI
         private void SetUpBoardProcess()
         {
             Game_Content_Style.Visibility = Visibility.Hidden;
+            Draw_Button.Visibility = Visibility.Visible;
+            Stay_Button.Visibility = Visibility.Visible;
+            WhoseTurn.Visibility = Visibility.Visible;
 
             VisibilityForScoreboard(true);
             PotScore.Text = "$" + pot;
@@ -200,11 +246,63 @@ namespace RaceTo21_GUI
 
                 myGrid.Children.Add(textBlock);
             }
+            DoNextTask();
         }
 
         private void UpdateScores()
         {
+            if (scores != null)
+            {
+                foreach (TextBlock textBlock in scores)
+                {
+                    myGrid.Children.Remove(textBlock);
+                }
 
+                scores.Clear();
+            }
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                TextBlock textBlock = new TextBlock
+                {
+                    Text = players[i].score.ToString(),
+                    Foreground = Brushes.White,
+                    FontSize = 20,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 0, 15, 0)
+                };
+
+                Grid.SetRow(textBlock, i + 1);
+                Grid.SetColumn(textBlock, 0);
+
+                scores.Add(textBlock);
+                myGrid.Children.Add(textBlock);
+            }
+        }
+
+        public int ScoreHand(Player player)
+        {
+            int score = 0;
+
+            foreach (Card card in player.cards)
+            {
+                string faceValue = card.ID.Remove(card.ID.Length - 1);
+                switch (faceValue)
+                {
+                    case "K":
+                    case "Q":
+                    case "J":
+                        score = score + 10;
+                        break;
+                    case "A":
+                        score = score + 1;
+                        break;
+                    default:
+                        score = score + int.Parse(faceValue);
+                        break;
+                }
+            }
+            return score;
         }
     }
 }
