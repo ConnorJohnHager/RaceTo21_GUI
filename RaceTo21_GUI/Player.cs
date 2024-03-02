@@ -9,8 +9,8 @@ namespace RaceTo21_GUI
     public class Player
     {
         public string name;
-        // public List<Card> cards = new List<Card>();
-        // public PlayerStatus status = PlayerStatus.active;
+        public List<Card> cards = new List<Card>();
+        public PlayerStatus status = PlayerStatus.active;
         public int score;
         public int bank = 100;
 

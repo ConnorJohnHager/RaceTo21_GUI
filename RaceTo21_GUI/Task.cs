@@ -11,7 +11,7 @@ namespace RaceTo21_GUI
         GetNumberOfPlayers,
         GetNames,
         GetBets,
-        IntroducePlayers,
+        SetUpBoard,
         PlayerTurn,
         CheckForEnd,
         CheckForNextRound,

@@ -25,10 +25,10 @@ namespace RaceTo21_GUI
         public bool TaskSuccess = false;
         public int TaskOrder = 0;
 
-        int NumberOfPlayers;
+        public int NumberOfPlayers;
         List<Player> players = new List<Player>();
-        int bet;
-        int pot;
+        public int bet;
+        public int pot;
 
         public MainWindow()
         {
@@ -61,7 +61,7 @@ namespace RaceTo21_GUI
                 {
                     TaskSuccess = false;
                     TaskOrder = 0;
-                    nextTask = Task.IntroducePlayers;
+                    nextTask = Task.SetUpBoard;
                 }
             }
 
@@ -72,11 +72,9 @@ namespace RaceTo21_GUI
                 User_Input.Text = "*Input Value*";
             }
 
-            if (nextTask == Task.IntroducePlayers)
+            if (nextTask == Task.SetUpBoard)
             {
-                Title_Phrase.Text = "Thank you for playing today!";
-                Support_Text.Visibility = Visibility.Hidden;
-                User_Input.Visibility = Visibility.Hidden;
+                SetUpBoardProcess();
             }
         }
 
@@ -158,6 +156,55 @@ namespace RaceTo21_GUI
             {
                 User_Input.Text = "*Invalid, try again*";
             }
+        }
+
+        private void VisibilityForScoreboard(bool visibility)
+        {
+            if (visibility)
+            {
+                Scoreboard.Visibility = Visibility.Visible;
+                PlayerTitle.Visibility = Visibility.Visible;
+                ScoreTitle.Visibility = Visibility.Visible;
+                PotName.Visibility = Visibility.Visible;
+                PotScore.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Scoreboard.Visibility = Visibility.Hidden;
+                PlayerTitle.Visibility = Visibility.Hidden;
+                ScoreTitle.Visibility = Visibility.Hidden;
+                PotName.Visibility = Visibility.Hidden;
+                PotScore.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void SetUpBoardProcess()
+        {
+            Game_Content_Style.Visibility = Visibility.Hidden;
+
+            VisibilityForScoreboard(true);
+            PotScore.Text = "$" + pot;
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                TextBlock textBlock = new TextBlock
+                {
+                    Text = players[i].name,
+                    Foreground = Brushes.White,
+                    FontSize = 20,
+                    Margin = new Thickness(15, 0, 0, 0)
+                };
+
+                Grid.SetRow(textBlock, i + 1);
+                Grid.SetColumn(textBlock, 0);
+
+                myGrid.Children.Add(textBlock);
+            }
+        }
+
+        private void UpdateScores()
+        {
+
         }
     }
 }
