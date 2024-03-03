@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,6 +33,7 @@ namespace RaceTo21_GUI
         public int pot;
         List<TextBlock> scores = new List<TextBlock>();
         Deck deck = new Deck();
+        public int busted = 0;
 
         public MainWindow()
         {
@@ -39,6 +41,9 @@ namespace RaceTo21_GUI
             DoNextTask();
         }
 
+        /// <summary>
+        /// Keeps track of the tasks needed to be done and what is visible on the screen.
+        /// </summary>
         public void DoNextTask()
         {
             if (nextTask == Task.GetNumberOfPlayers)
@@ -93,15 +98,15 @@ namespace RaceTo21_GUI
                     UpdateScores();
                     nextTask = Task.CheckForEnd;
                 }
-                else if (players[currentPlayer].status != PlayerStatus.active)
-                {
-                    UpdateScores();
-                    nextTask = Task.CheckForEnd;
-                }
                 else if (TaskSuccess == true)
                 {
                     UpdateScores();
                     TaskSuccess = false;
+                    nextTask = Task.CheckForEnd;
+                }
+                else if (players[currentPlayer].status != PlayerStatus.active)
+                {
+                    UpdateScores();
                     nextTask = Task.CheckForEnd;
                 }
                 else
@@ -109,18 +114,16 @@ namespace RaceTo21_GUI
                     WhoseTurn.Text = "Current Turn: " + players[currentPlayer].name;
                 }
             }
+
             if (nextTask == Task.CheckForEnd)
             {
-                currentPlayer++;
-                if (currentPlayer > players.Count - 1)
-                {
-                    currentPlayer = 0; // back to the first player...
-                }
-                nextTask = Task.PlayerTurn;
-                DoNextTask();
+                CheckForEndProcess();
             }
         }
 
+        /// <summary>
+        /// The three buttons that can be clicked by the user.
+        /// </summary>
         private void Continue_Button_Click(object sender, RoutedEventArgs e)
         {
             CheckTaskSuccess();
@@ -131,6 +134,7 @@ namespace RaceTo21_GUI
             Card card = deck.DealTopCard();
             players[currentPlayer].cards.Add(card);
             players[currentPlayer].score = ScoreHand(players[currentPlayer]);
+            CheckPlayerForBust(players[currentPlayer]);
             TaskSuccess = true;
             DoNextTask();
         }
@@ -138,9 +142,13 @@ namespace RaceTo21_GUI
         private void Stay_Button_Click(object sender, RoutedEventArgs e)
         {
             players[currentPlayer].status = PlayerStatus.stay;
+            TaskSuccess = true;
             DoNextTask();
         }
 
+        /// <summary>
+        /// State machine for Continue_Button
+        /// </summary>
         private void CheckTaskSuccess()
         {
             if (nextTask == Task.GetNumberOfPlayers)
@@ -318,6 +326,90 @@ namespace RaceTo21_GUI
                 }
             }
             return score;
+        }
+
+            public void CheckPlayerForBust(Player player)
+        {
+            if (player.score > 21)
+            {
+                player.status = PlayerStatus.bust;
+                busted++;
+            }
+        }
+
+        public void CheckForEndProcess()
+        {
+            if (players[currentPlayer].score == 21)
+            {
+                players[currentPlayer].status = PlayerStatus.win;
+                Player winner = DoFinalScoring();
+                // winner.bank += pot;
+                AnnounceWinner(winner);
+            }
+            else if (busted == players.Count - 1 || !CheckActivePlayers())
+            {
+                Player winner = DoFinalScoring();
+                // winner.bank += pot; 
+                AnnounceWinner(winner);
+            }
+            else
+            {
+                currentPlayer++;
+                if (currentPlayer > players.Count - 1)
+                {
+                    currentPlayer = 0; // back to the first player...
+                }
+                nextTask = Task.PlayerTurn;
+                DoNextTask();
+            }
+        }
+
+        public bool CheckActivePlayers()
+        {
+            foreach (var player in players)
+            {
+                if (player.status == PlayerStatus.active)
+                {
+                    return true; // at least one player is still going!
+                }
+            }
+            return false; // everyone has stayed or busted, or someone won!
+        }
+
+        public Player DoFinalScoring()
+        {
+            int highScore = 0;
+            foreach (var player in players)
+            {
+                if (player.status == PlayerStatus.win)
+                {
+                    return player;
+                }
+                if (player.status == PlayerStatus.stay)
+                {
+                    if (player.score > highScore)
+                    {
+                        highScore = player.score;
+                    }
+                }
+                // if busted don't bother checking!
+            }
+            if (highScore > 0) // someone scored, anyway!
+            {
+                // find the FIRST player in list who meets win condition
+                return players.Find(player => player.score == highScore);
+            }
+            return null; // everyone must have busted because nobody won!
+        }
+
+        public void AnnounceWinner(Player player)
+        {
+            FadeBackground.Visibility = Visibility.Visible;
+                Canvas.SetZIndex(FadeBackground, 998); // covers everything behind Game_Content_Style with a opaque screen
+            Announcing_Winner_Style.Visibility = Visibility.Visible;
+                Canvas.SetZIndex(Announcing_Winner_Style, 999); // makes sure it appears in front of everything
+            Winner_Phrase.Text = "Congratulations " + player.name + "!";
+            Support_Winner_Text.Text = "You've won $" + pot + ". Thanks for playing!";
         }
     }
 }
