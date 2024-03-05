@@ -269,6 +269,9 @@ namespace RaceTo21_GUI
 
                 myGrid.Children.Add(textBlock);
             }
+
+            // Add deck image
+
             DoNextTask();
         }
 

@@ -10,5 +10,6 @@ namespace RaceTo21_GUI
     {
         public string ID;
         public string name;
+        public string source; 
     }
 }
