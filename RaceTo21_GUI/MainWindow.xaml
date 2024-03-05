@@ -42,6 +42,8 @@
         <Button x:Name="Draw_Button" Content="Draw" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="6" Grid.Column="2" FontSize="16" Width="100" Visibility="Hidden" Click="Draw_Button_Click"/>
         <Button x:Name="Stay_Button" Content="Stay" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="7" Grid.Column="2" FontSize="16" Width="100" Visibility="Hidden" Click="Stay_Button_Click"/>
 
+        <Image x:Name="Deck_Image" Source="/Card_Images/B7.png" Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" Width="60" Visibility="Hidden"/>
+        
         <TextBlock x:Name="WhoseTurn" Text="..." HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontSize="16" Visibility="Hidden"/>
 
         <Rectangle x:Name="FadeBackground" Grid.Row="0"  Grid.RowSpan="10" Grid.Column="0" Grid.ColumnSpan="3" Opacity="0.3" Fill="Black" Visibility="Hidden"/>

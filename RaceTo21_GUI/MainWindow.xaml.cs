@@ -250,6 +250,7 @@ namespace RaceTo21_GUI
             Draw_Button.Visibility = Visibility.Visible;
             Stay_Button.Visibility = Visibility.Visible;
             WhoseTurn.Visibility = Visibility.Visible;
+            Deck_Image.Visibility = Visibility.Visible;
 
             VisibilityForScoreboard(true);
             PotScore.Text = "$" + pot;
@@ -269,9 +270,6 @@ namespace RaceTo21_GUI
 
                 myGrid.Children.Add(textBlock);
             }
-
-            // Add deck image
-
             DoNextTask();
         }
 
