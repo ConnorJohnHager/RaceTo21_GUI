@@ -111,7 +111,7 @@ namespace RaceTo21_GUI
                 }
                 else
                 {
-                    WhoseTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                    UpdateVisualCards();
                 }
             }
 
@@ -249,8 +249,8 @@ namespace RaceTo21_GUI
             Game_Content_Style.Visibility = Visibility.Hidden;
             Draw_Button.Visibility = Visibility.Visible;
             Stay_Button.Visibility = Visibility.Visible;
-            WhoseTurn.Visibility = Visibility.Visible;
             Deck_Image.Visibility = Visibility.Visible;
+            CardsOnTheTable.Visibility = Visibility.Visible;
 
             VisibilityForScoreboard(true);
             PotScore.Text = "$" + pot;
@@ -329,7 +329,7 @@ namespace RaceTo21_GUI
             return score;
         }
 
-            public void CheckPlayerForBust(Player player)
+        public void CheckPlayerForBust(Player player)
         {
             if (player.score > 21)
             {
@@ -365,7 +365,80 @@ namespace RaceTo21_GUI
             }
         }
 
-        public bool CheckActivePlayers()
+        public void UpdateVisualCards()
+        {
+            if (players.Count == 2)
+            {
+                CardsFromCurrentTurn.Children.Clear();
+                CardsFromNextTurn.Children.Clear();
+
+                if (currentPlayer == 0)
+                {
+                    PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                    PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer + 1].name;
+                }
+                else if (currentPlayer == 1)
+                {
+                    PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                    PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer - 1].name;
+                }
+            }
+            else if (players.Count >= 3)
+            {
+                CardsFromPreviousTurn.Children.Clear();
+                CardsFromCurrentTurn.Children.Clear();
+                CardsFromNextTurn.Children.Clear();
+
+                if (currentPlayer == 0)
+                {
+                    PlayerNameFromPreviousTurn.Text = "Previous Turn: " + players[players.Count - 1].name;
+                    PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                    PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer + 1].name;
+                }
+                else if (currentPlayer == players.Count - 1)
+                {
+                    PlayerNameFromPreviousTurn.Text = "Previous Turn: " + players[currentPlayer - 1].name;
+                    PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                    PlayerNameFromNextTurn.Text = "Next Turn: " + players[0].name;
+                }
+                else
+                {
+                    PlayerNameFromPreviousTurn.Text = "Previous Turn: " + players[currentPlayer - 1].name;
+                    PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+                    PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer + 1].name;
+                }
+            }
+
+            /* if (scores != null)
+            {
+                foreach (TextBlock textBlock in scores)
+                {
+                    myGrid.Children.Remove(textBlock);
+                }
+
+                scores.Clear();
+            }
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                TextBlock textBlock = new TextBlock
+                {
+                    Text = players[i].score.ToString(),
+                    Foreground = Brushes.White,
+                    FontSize = 20,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 0, 15, 0)
+                };
+
+                Grid.SetRow(textBlock, i + 1);
+                Grid.SetColumn(textBlock, 0);
+
+                scores.Add(textBlock);
+                myGrid.Children.Add(textBlock);
+            }*/
+        }
+
+            public bool CheckActivePlayers()
         {
             foreach (var player in players)
             {

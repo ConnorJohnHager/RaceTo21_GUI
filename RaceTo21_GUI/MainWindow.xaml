@@ -43,8 +43,6 @@
         <Button x:Name="Stay_Button" Content="Stay" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="7" Grid.Column="2" FontSize="16" Width="100" Visibility="Hidden" Click="Stay_Button_Click"/>
 
         <Image x:Name="Deck_Image" Source="/Card_Images/B7.png" Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" Width="60" Visibility="Hidden"/>
-        
-        <TextBlock x:Name="WhoseTurn" Text="..." HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1" FontSize="16" Visibility="Hidden"/>
 
         <Rectangle x:Name="FadeBackground" Grid.Row="0"  Grid.RowSpan="10" Grid.Column="0" Grid.ColumnSpan="3" Opacity="0.3" Fill="Black" Visibility="Hidden"/>
 
@@ -54,6 +52,16 @@
                 <TextBlock x:Name="Support_Winner_Text" Text="#" Foreground="#FFFFFF" HorizontalAlignment="Center" FontSize="16" Margin="20,20,20,0"/>
             </StackPanel>
         </Border>
+        
+        <!-- Where players' cards will be located -->
+        <StackPanel x:Name="CardsOnTheTable" Orientation="Vertical" VerticalAlignment="Center" Grid.Row="1" Grid.RowSpan="8" Grid.Column="1" Visibility="Hidden">
+            <TextBlock x:Name="PlayerNameFromPreviousTurn" Text="" Foreground="Black" FontSize="16" HorizontalAlignment="Center"/>
+            <StackPanel x:Name="CardsFromPreviousTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+            <TextBlock x:Name="PlayerNameFromCurrentTurn" Text="" Foreground="#FFFFFF" FontSize="24" HorizontalAlignment="Center"/>
+            <StackPanel x:Name="CardsFromCurrentTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+            <TextBlock x:Name="PlayerNameFromNextTurn" Text="" Foreground="Black" FontSize="16" HorizontalAlignment="Center"/>
+            <StackPanel x:Name="CardsFromNextTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+        </StackPanel>
 
         <!-- This is the start of the game and asks for player input -->
         <Border x:Name="Game_Content_Style"  BorderBrush="#F8E8A7" BorderThickness="5" Grid.Row="2" Grid.RowSpan="6" Grid.ColumnSpan="3" Margin="80, 20, 80, 20" CornerRadius="20" Background="#0E5432">
