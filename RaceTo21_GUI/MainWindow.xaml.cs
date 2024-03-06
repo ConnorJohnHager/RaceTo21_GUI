@@ -185,42 +185,48 @@ namespace RaceTo21_GUI
 
         private void GetPlayerNamesProcess()
         {
-            if (User_Input.Text != "*Insert Text*" && User_Input.Text.Length >= 1 && User_Input.Text.Length <= 10)
+            if (User_Input.Text != "*Input Name*")
             {
-                AddPlayer(User_Input.Text);
-                nextTask = Task.GetBets;
-                DoNextTask();
-            }
-            else
-            {
-                User_Input.Text = "*Invalid, try again*";
+                if (User_Input.Text.Length >= 1 && User_Input.Text.Length <= 10)
+                {
+                    AddPlayer(User_Input.Text);
+                    nextTask = Task.GetBets;
+                    DoNextTask();
+                }
+                else
+                {
+                    User_Input.Text = "*Invalid, try again*";
+                }
             }
         }
 
         private void GetPlayerBetsProcess()
         {
-            if (int.TryParse(User_Input.Text, out bet) == true && bet > 0 && bet <= players[TaskOrder].bank)
+            if (User_Input.Text != "*Input Value*" )
             {
-                bet = int.Parse(User_Input.Text);
-                players[TaskOrder].bank -= bet;
-                pot += bet;
-                TaskOrder++;
-
-                if (TaskOrder == NumberOfPlayers)
+                if (int.TryParse(User_Input.Text, out bet) == true && bet > 0 && bet <= players[TaskOrder].bank)
                 {
-                    TaskSuccess = true;
-                    nextTask = Task.GetNames;
-                    DoNextTask();
+                    bet = int.Parse(User_Input.Text);
+                    players[TaskOrder].bank -= bet;
+                    pot += bet;
+                    TaskOrder++;
+
+                    if (TaskOrder == NumberOfPlayers)
+                    {
+                        TaskSuccess = true;
+                        nextTask = Task.GetNames;
+                        DoNextTask();
+                    }
+                    else
+                    {
+                        nextTask = Task.GetNames;
+                        DoNextTask();
+                    }
                 }
                 else
                 {
-                    nextTask = Task.GetNames;
-                    DoNextTask();
+                    User_Input.Text = "*Invalid, try again*";
                 }
-            }
-            else
-            {
-                User_Input.Text = "*Invalid, try again*";
             }
         }
 
@@ -375,12 +381,68 @@ namespace RaceTo21_GUI
                 if (currentPlayer == 0)
                 {
                     PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+
+                    foreach (Card card in players[currentPlayer].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 60
+                        };
+
+                        CardsFromCurrentTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer + 1].name;
+
+                    foreach (Card card in players[currentPlayer + 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromNextTurn.Children.Add(image);
+                    }
                 }
                 else if (currentPlayer == 1)
                 {
                     PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+
+                    foreach (Card card in players[currentPlayer].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 60
+                        };
+
+                        CardsFromCurrentTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer - 1].name;
+
+                    foreach (Card card in players[currentPlayer - 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromNextTurn.Children.Add(image);
+                    }
                 }
             }
             else if (players.Count >= 3)
@@ -392,50 +454,151 @@ namespace RaceTo21_GUI
                 if (currentPlayer == 0)
                 {
                     PlayerNameFromPreviousTurn.Text = "Previous Turn: " + players[players.Count - 1].name;
+
+                    foreach (Card card in players[players.Count - 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+                        
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromPreviousTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+
+                    foreach (Card card in players[currentPlayer].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 60
+                        };
+
+                        CardsFromCurrentTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer + 1].name;
+
+                    foreach (Card card in players[currentPlayer + 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromNextTurn.Children.Add(image);
+                    }
                 }
                 else if (currentPlayer == players.Count - 1)
                 {
                     PlayerNameFromPreviousTurn.Text = "Previous Turn: " + players[currentPlayer - 1].name;
+
+                    foreach (Card card in players[currentPlayer - 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromPreviousTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+
+                    foreach (Card card in players[currentPlayer].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 60
+                        };
+
+                        CardsFromCurrentTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromNextTurn.Text = "Next Turn: " + players[0].name;
+
+                    foreach (Card card in players[0].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromNextTurn.Children.Add(image);
+                    }
                 }
                 else
                 {
                     PlayerNameFromPreviousTurn.Text = "Previous Turn: " + players[currentPlayer - 1].name;
+
+                    foreach (Card card in players[currentPlayer - 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromPreviousTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromCurrentTurn.Text = "Current Turn: " + players[currentPlayer].name;
+
+                    foreach (Card card in players[currentPlayer].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 60
+                        };
+
+                        CardsFromCurrentTurn.Children.Add(image);
+                    }
+
                     PlayerNameFromNextTurn.Text = "Next Turn: " + players[currentPlayer + 1].name;
+
+                    foreach (Card card in players[currentPlayer + 1].cards)
+                    {
+                        BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
+
+                        System.Windows.Controls.Image image = new System.Windows.Controls.Image()
+                        {
+                            Source = bitmapImage,
+                            Width = 50,
+                            Opacity = 0.7
+                        };
+
+                        CardsFromNextTurn.Children.Add(image);
+                    }
                 }
             }
-
-            /* if (scores != null)
-            {
-                foreach (TextBlock textBlock in scores)
-                {
-                    myGrid.Children.Remove(textBlock);
-                }
-
-                scores.Clear();
-            }
-
-            for (int i = 0; i < players.Count; i++)
-            {
-                TextBlock textBlock = new TextBlock
-                {
-                    Text = players[i].score.ToString(),
-                    Foreground = Brushes.White,
-                    FontSize = 20,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Margin = new Thickness(0, 0, 15, 0)
-                };
-
-                Grid.SetRow(textBlock, i + 1);
-                Grid.SetColumn(textBlock, 0);
-
-                scores.Add(textBlock);
-                myGrid.Children.Add(textBlock);
-            }*/
         }
 
             public bool CheckActivePlayers()

@@ -54,13 +54,13 @@
         </Border>
         
         <!-- Where players' cards will be located -->
-        <StackPanel x:Name="CardsOnTheTable" Orientation="Vertical" VerticalAlignment="Center" Grid.Row="1" Grid.RowSpan="8" Grid.Column="1" Visibility="Hidden">
-            <TextBlock x:Name="PlayerNameFromPreviousTurn" Text="" Foreground="Black" FontSize="16" HorizontalAlignment="Center"/>
-            <StackPanel x:Name="CardsFromPreviousTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40"/>
-            <TextBlock x:Name="PlayerNameFromCurrentTurn" Text="" Foreground="#FFFFFF" FontSize="24" HorizontalAlignment="Center"/>
-            <StackPanel x:Name="CardsFromCurrentTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40"/>
-            <TextBlock x:Name="PlayerNameFromNextTurn" Text="" Foreground="Black" FontSize="16" HorizontalAlignment="Center"/>
-            <StackPanel x:Name="CardsFromNextTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+        <StackPanel x:Name="CardsOnTheTable" Orientation="Vertical" VerticalAlignment="Center" Grid.Row="0" Grid.RowSpan="10" Grid.Column="1" Visibility="Hidden">
+            <TextBlock x:Name="PlayerNameFromPreviousTurn" Text="" Foreground="Black" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <StackPanel x:Name="CardsFromPreviousTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+            <TextBlock x:Name="PlayerNameFromCurrentTurn" Text="" Foreground="#FFFFFF" FontSize="24" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <StackPanel x:Name="CardsFromCurrentTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+            <TextBlock x:Name="PlayerNameFromNextTurn" Text="" Foreground="Black" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <StackPanel x:Name="CardsFromNextTurn"  Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0"/>
         </StackPanel>
 
         <!-- This is the start of the game and asks for player input -->

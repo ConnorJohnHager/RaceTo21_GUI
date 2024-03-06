@@ -62,8 +62,7 @@ namespace RaceTo21_GUI
                         cardLongName += "Diamonds";
                     };
 
-                    cards.Add(new Card { ID = cardName + cardSuit, name = cardLongName, source = "/Card_Images/" + cardName + cardSuit + ".png" });
-                //update for correct source link once available
+                    cards.Add(new Card { ID = cardName + cardSuit, name = cardLongName, source = @"file://C:\Users\DGM6308\source\repos\RaceTo21_GUI\RaceTo21_GUI\Card_Images\" + cardName + cardSuit + ".png"});
                 }
             }
         }
