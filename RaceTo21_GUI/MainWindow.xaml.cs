@@ -165,6 +165,9 @@ namespace RaceTo21_GUI
             }
         }
 
+        /// <summary>
+        /// Code used to process step success during DoNextTask();
+        /// </summary>
         private void GetNumberOfPlayersProcess()
         {
             if (int.TryParse(User_Input.Text, out NumberOfPlayers) == true && NumberOfPlayers >= 2 && NumberOfPlayers <= 8)
@@ -177,10 +180,6 @@ namespace RaceTo21_GUI
             {
                 User_Input.Text = "*Invalid, try again*";
             }
-        }
-        private void AddPlayer(string n)
-        {
-            players.Add(new Player(n));
         }
 
         private void GetPlayerNamesProcess()
@@ -230,26 +229,6 @@ namespace RaceTo21_GUI
             }
         }
 
-        private void VisibilityForScoreboard(bool visibility)
-        {
-            if (visibility)
-            {
-                Scoreboard.Visibility = Visibility.Visible;
-                PlayerTitle.Visibility = Visibility.Visible;
-                ScoreTitle.Visibility = Visibility.Visible;
-                PotName.Visibility = Visibility.Visible;
-                PotScore.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Scoreboard.Visibility = Visibility.Hidden;
-                PlayerTitle.Visibility = Visibility.Hidden;
-                ScoreTitle.Visibility = Visibility.Hidden;
-                PotName.Visibility = Visibility.Hidden;
-                PotScore.Visibility = Visibility.Hidden;
-            }
-        }
-
         private void SetUpBoardProcess()
         {
             Game_Content_Style.Visibility = Visibility.Hidden;
@@ -279,35 +258,39 @@ namespace RaceTo21_GUI
             DoNextTask();
         }
 
-        private void UpdateScores()
+        public void CheckForEndProcess()
         {
-            if (scores != null)
+            if (players[currentPlayer].score == 21)
             {
-                foreach (TextBlock textBlock in scores)
+                players[currentPlayer].status = PlayerStatus.win;
+                Player winner = DoFinalScoring();
+                // winner.bank += pot;
+                AnnounceWinner(winner);
+            }
+            else if (busted == players.Count - 1 || !CheckActivePlayers())
+            {
+                Player winner = DoFinalScoring();
+                // winner.bank += pot; 
+                AnnounceWinner(winner);
+            }
+            else
+            {
+                currentPlayer++;
+                if (currentPlayer > players.Count - 1)
                 {
-                    myGrid.Children.Remove(textBlock);
+                    currentPlayer = 0; // back to the first player...
                 }
-
-                scores.Clear();
+                nextTask = Task.PlayerTurn;
+                DoNextTask();
             }
+        }
 
-            for (int i = 0; i < players.Count; i++)
-            {
-                TextBlock textBlock = new TextBlock
-                {
-                    Text = players[i].score.ToString(),
-                    Foreground = Brushes.White,
-                    FontSize = 20,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Margin = new Thickness(0, 0, 15, 0)
-                };
-
-                Grid.SetRow(textBlock, i + 1);
-                Grid.SetColumn(textBlock, 0);
-
-                scores.Add(textBlock);
-                myGrid.Children.Add(textBlock);
-            }
+        /// <summary>
+        /// Code used for internal game mechanics and tracking conditions/rules
+        /// </summary>
+        private void AddPlayer(string n)
+        {
+            players.Add(new Player(n));
         }
 
         public int ScoreHand(Player player)
@@ -344,30 +327,95 @@ namespace RaceTo21_GUI
             }
         }
 
-        public void CheckForEndProcess()
+        public bool CheckActivePlayers()
         {
-            if (players[currentPlayer].score == 21)
+            foreach (var player in players)
             {
-                players[currentPlayer].status = PlayerStatus.win;
-                Player winner = DoFinalScoring();
-                // winner.bank += pot;
-                AnnounceWinner(winner);
+                if (player.status == PlayerStatus.active)
+                {
+                    return true; // at least one player is still going!
+                }
             }
-            else if (busted == players.Count - 1 || !CheckActivePlayers())
+            return false; // everyone has stayed or busted, or someone won!
+        }
+
+        public Player DoFinalScoring()
+        {
+            int highScore = 0;
+            foreach (var player in players)
             {
-                Player winner = DoFinalScoring();
-                // winner.bank += pot; 
-                AnnounceWinner(winner);
+                if (player.status == PlayerStatus.win)
+                {
+                    return player;
+                }
+                if (player.status == PlayerStatus.stay)
+                {
+                    if (player.score > highScore)
+                    {
+                        highScore = player.score;
+                    }
+                }
+                // if busted don't bother checking!
+            }
+            if (highScore > 0) // someone scored, anyway!
+            {
+                // find the FIRST player in list who meets win condition
+                return players.Find(player => player.score == highScore);
+            }
+            return null; // everyone must have busted because nobody won!
+        }
+
+        /// <summary>
+        /// Code used to update visuals of the game
+        /// </summary>
+        private void VisibilityForScoreboard(bool visibility)
+        {
+            if (visibility)
+            {
+                Scoreboard.Visibility = Visibility.Visible;
+                PlayerTitle.Visibility = Visibility.Visible;
+                ScoreTitle.Visibility = Visibility.Visible;
+                PotName.Visibility = Visibility.Visible;
+                PotScore.Visibility = Visibility.Visible;
             }
             else
             {
-                currentPlayer++;
-                if (currentPlayer > players.Count - 1)
+                Scoreboard.Visibility = Visibility.Hidden;
+                PlayerTitle.Visibility = Visibility.Hidden;
+                ScoreTitle.Visibility = Visibility.Hidden;
+                PotName.Visibility = Visibility.Hidden;
+                PotScore.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void UpdateScores()
+        {
+            if (scores != null)
+            {
+                foreach (TextBlock textBlock in scores)
                 {
-                    currentPlayer = 0; // back to the first player...
+                    myGrid.Children.Remove(textBlock);
                 }
-                nextTask = Task.PlayerTurn;
-                DoNextTask();
+
+                scores.Clear();
+            }
+
+            for (int i = 0; i < players.Count; i++)
+            {
+                TextBlock textBlock = new TextBlock
+                {
+                    Text = players[i].score.ToString(),
+                    Foreground = Brushes.White,
+                    FontSize = 20,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 0, 15, 0)
+                };
+
+                Grid.SetRow(textBlock, i + 1);
+                Grid.SetColumn(textBlock, 0);
+
+                scores.Add(textBlock);
+                myGrid.Children.Add(textBlock);
             }
         }
 
@@ -458,7 +506,7 @@ namespace RaceTo21_GUI
                     foreach (Card card in players[players.Count - 1].cards)
                     {
                         BitmapImage bitmapImage = new BitmapImage(new Uri(card.source));
-                        
+
                         System.Windows.Controls.Image image = new System.Windows.Controls.Image()
                         {
                             Source = bitmapImage,
@@ -601,50 +649,12 @@ namespace RaceTo21_GUI
             }
         }
 
-            public bool CheckActivePlayers()
-        {
-            foreach (var player in players)
-            {
-                if (player.status == PlayerStatus.active)
-                {
-                    return true; // at least one player is still going!
-                }
-            }
-            return false; // everyone has stayed or busted, or someone won!
-        }
-
-        public Player DoFinalScoring()
-        {
-            int highScore = 0;
-            foreach (var player in players)
-            {
-                if (player.status == PlayerStatus.win)
-                {
-                    return player;
-                }
-                if (player.status == PlayerStatus.stay)
-                {
-                    if (player.score > highScore)
-                    {
-                        highScore = player.score;
-                    }
-                }
-                // if busted don't bother checking!
-            }
-            if (highScore > 0) // someone scored, anyway!
-            {
-                // find the FIRST player in list who meets win condition
-                return players.Find(player => player.score == highScore);
-            }
-            return null; // everyone must have busted because nobody won!
-        }
-
         public void AnnounceWinner(Player player)
         {
             FadeBackground.Visibility = Visibility.Visible;
-                Canvas.SetZIndex(FadeBackground, 998); // covers everything behind Game_Content_Style with a opaque screen
+            Canvas.SetZIndex(FadeBackground, 998); // covers everything behind Game_Content_Style with a opaque screen
             Announcing_Winner_Style.Visibility = Visibility.Visible;
-                Canvas.SetZIndex(Announcing_Winner_Style, 999); // makes sure it appears in front of everything
+            Canvas.SetZIndex(Announcing_Winner_Style, 999); // makes sure it appears in front of everything
             Winner_Phrase.Text = "Congratulations " + player.name + "!";
             Support_Winner_Text.Text = "You've won $" + pot + ". Thanks for playing!";
         }
