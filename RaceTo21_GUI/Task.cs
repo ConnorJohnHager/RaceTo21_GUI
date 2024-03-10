@@ -14,7 +14,7 @@ namespace RaceTo21_GUI
         SetUpBoard,
         PlayerTurn,
         CheckForEnd,
-        CheckForNextRound,
-        GameOver
+        CheckForNextRound, //not currently used
+        GameOver //not currently used
     }
 }

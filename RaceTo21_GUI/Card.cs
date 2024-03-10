@@ -10,6 +10,6 @@ namespace RaceTo21_GUI
     {
         public string ID;
         public string name;
-        public string source; 
+        public string source; //used to store the location of the image file
     }
 }

@@ -10,7 +10,7 @@ namespace RaceTo21_GUI
     {
         List<Card> cards = new List<Card>();
 
-        public Deck()
+        public Deck() //Setting up cards within the deck
         {
             string[] suits = { "S", "H", "C", "D" };
 
