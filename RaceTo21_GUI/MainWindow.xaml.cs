@@ -263,14 +263,20 @@ namespace RaceTo21_GUI
             if (players[currentPlayer].score == 21)
             {
                 players[currentPlayer].status = PlayerStatus.win;
-                Player winner = DoFinalScoring();
-                // winner.bank += pot;
-                AnnounceWinner(winner);
+                players[currentPlayer].bank += pot;
+                AnnounceWinner(players[currentPlayer]);
             }
             else if (busted == players.Count - 1 || !CheckActivePlayers())
             {
                 Player winner = DoFinalScoring();
-                // winner.bank += pot; 
+
+                foreach (Player player in players)
+                {
+                    if (winner.status == player.status)
+                    {
+                        player.bank += pot;
+                    }
+                }
                 AnnounceWinner(winner);
             }
             else
