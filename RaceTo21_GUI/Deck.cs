@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,7 +63,9 @@ namespace RaceTo21_GUI
                         cardLongName += "Diamonds";
                     };
 
-                    cards.Add(new Card { ID = cardName + cardSuit, name = cardLongName, source = @"file://C:\Users\DGM6308\source\repos\RaceTo21_GUI\RaceTo21_GUI\Card_Images\" + cardName + cardSuit + ".png"});
+                    string cardImagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Card_Images", cardName + cardSuit + ".png");
+
+                    cards.Add(new Card { ID = cardName + cardSuit, name = cardLongName, source = cardImagePath});
                 }
             }
         }

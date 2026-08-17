@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -272,7 +273,7 @@ namespace RaceTo21_GUI
 
                 foreach (Player player in players)
                 {
-                    if (winner.status == player.status)
+                    if (player == winner)
                     {
                         player.bank += pot;
                     }
@@ -347,28 +348,43 @@ namespace RaceTo21_GUI
 
         public Player DoFinalScoring()
         {
-            int highScore = 0;
+            // Someone already reached 21
             foreach (var player in players)
             {
                 if (player.status == PlayerStatus.win)
                 {
                     return player;
                 }
-                if (player.status == PlayerStatus.stay)
-                {
-                    if (player.score > highScore)
-                    {
-                        highScore = player.score;
-                    }
-                }
-                // if busted don't bother checking!
             }
-            if (highScore > 0) // someone scored, anyway!
+
+            // Find players who haven't busted
+            List<Player> activePlayers = players
+                .Where(player => player.status != PlayerStatus.bust)
+                .ToList();
+
+            // Only one player remains
+            if (activePlayers.Count == 1)
             {
-                // find the FIRST player in list who meets win condition
-                return players.Find(player => player.score == highScore);
+                return activePlayers[0];
             }
-            return null; // everyone must have busted because nobody won!
+
+            // Otherwise, find the highest score among players who stayed
+            int highScore = 0;
+
+            foreach (var player in activePlayers)
+            {
+                if (player.status == PlayerStatus.stay && player.score > highScore)
+                {
+                    highScore = player.score;
+                }
+            }
+
+            if (highScore > 0)
+            {
+                return activePlayers.Find(player => player.score == highScore);
+            }
+
+            return null;
         }
 
         /// <summary>
